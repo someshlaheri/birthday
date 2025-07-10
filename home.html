@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: #333;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin: 20px;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #d23669;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #d23669;
+            color: white;
+            border-radius: 10px;
+            animation: fadeIn 1s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .instructions {
+            font-size: 1rem;
+            color: #d23669;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        button {
+            background: #d23669;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(210, 54, 105, 0.4);
+        }
+
+        button:hover {
+            background: #a52a52;
+            transform: translateY(-3px);
+        }
+
+        /* Candle Styles */
+        #glow {
+            position: absolute;
+            left: calc(50% - .1em);
+            bottom: calc(35% + 9em);
+            width: .2em;
+            height: .2em;
+            border-radius: 100%;
+            opacity: .15;
+        }
+
+        #candle-container {
+            position: relative;
+            width: 1.5em;
+            height: 10em;
+            margin: 40px auto;
+            overflow: hidden;
+        }
+
+        #candle-container::before {
+            position: absolute;
+            bottom: 0;
+            left: 8%;
+            content: '';
+            width: 84%;
+            height: 80%;
+            background: linear-gradient(whitesmoke 0, #1e1934 125%);
+            border-radius: .25em;
+            box-sizing: border-box;
+            border: 1px solid #333;
+        }
+
+        #top {
+            position: absolute;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 2em;
+            background-color: transparent;
+        }
+
+        #knot {
+            position: absolute;
+            bottom: 0;
+            left: calc(50% - .05em);
+            height: .5em;
+            width: .1em;
+            background-color: #0f3146;
+        }
+
+        .smoke {
+            position: absolute;
+            opacity: 0;
+            border-radius: 100%;
+        }
+
+        .smoke:nth-child(1) {
+            bottom: .1em;
+            left: calc(50% - .5em);
+            height: .5em;
+            width: .5em;
+            background-color: silver;
+        }
+
+        .smoke:nth-child(2) {
+            bottom: .6em;
+            left: 50%;
+            height: .6em;
+            width: .6em;
+            background-color: lightgray;
+            animation-delay: .2s;
+        }
+
+        .smoke:nth-child(3) {
+            bottom: 1.1em;
+            left: 20%;
+            height: .3em;
+            width: .3em;
+            background-color: whitesmoke;
+            animation-delay: .3s;
+        }
+
+        #flame {
+            position: absolute;
+            bottom: .15em;
+            left: calc(50% - 0.75em);
+            width: 1.5em;
+            height: 1.6em;
+            background-color: #ffee86;
+            border-radius: 100%;
+            box-shadow: inset 0 0 0 .1em #ffee86;
+            transform: rotateY(30deg);
+            cursor: pointer;
+        }
+
+        #flame::after {
+            position: absolute;
+            content: '';
+            width: .7em;
+            height: .9em;
+            bottom: 10%;
+            left: calc(50% - .35em);
+            background-color: #ff3200;
+            border-radius: 100%;
+            animation: burnInner 1.5s ease-in-out infinite;
+        }
+
+        .stripe {
+            position: absolute;
+            left: -.25em;
+            width: 2em;
+            height: .25em;
+            background-color: #ff4b6f;
+            transform: rotate(25deg);
+            border-radius: 100%;
+            box-shadow: 1px 1px 0 1px rgba(0, 0, 0, .25);
+        }
+
+        .stripe:nth-child(1) { top: 2.7em; opacity: 1.4; }
+        .stripe:nth-child(2) { top: 4.2em; opacity: 0.9; }
+        .stripe:nth-child(3) { top: 5.7em; opacity: 0.733; }
+        .stripe:nth-child(4) { top: 7.2em; opacity: 0.65; }
+        .stripe:nth-child(5) { top: 8.7em; opacity: 0.6; }
+
+        /* Candle Animations */
+        @keyframes glow {
+            0% { box-shadow: 0 0 1.5em 2.2em rgba(255, 246, 162, .75); }
+            50% { box-shadow: 0 0 1.5em 2em rgba(255, 246, 162, .6); }
+            100% { box-shadow: 0 0 1.5em 2.2em rgba(255, 246, 162, .75); }
+        }
+
+        @keyframes burn {
+            0% { height: 1.7em; transform: rotateY(30deg); }
+            50% { height: 1.3em; transform: rotateY(0deg); opacity: .9; }
+            100% { height: 1.7em; transform: rotateY(30deg); }
+        }
+
+        @keyframes burnInner {
+            0% { height: .9em; transform: rotateX(0deg); }
+            50% { height: .8em; transform: rotateX(30deg); }
+            100% { height: .9em; transform: rotateX(0deg); }
+        }
+
+        @keyframes puff {
+            100% { transform: rotateY(-30deg); opacity: 0; }
+        }
+
+        @keyframes puff-bubble {
+            0% { opacity: 0; transform: scale(1, 1); }
+            50% { opacity: 1; transform: scale(1.2, 1.2); }
+            100% { opacity: 0; transform: scale(.8, .8); }
+        }
+
+        .glow {
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        .burn {
+            animation: burn 1.5s ease-in-out infinite;
+        }
+
+        .puff {
+            animation: puff .3s ease-in-out forwards;
+        }
+
+        .puff-bubble {
+            animation: puff-bubble .75s ease-in-out forwards;
+        }
+
+        /* Hearts Styles */
+        .hearts {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(210, 54, 105, 0.4);
+            opacity: 1;
+            transition: all 3s ease-out;
+        }
+
+        .heart.animate {
+            animation: float 5s linear forwards;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .photo-frame {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid #d23669;
+            margin: 20px auto;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            #candle-container {
+                height: 8em;
+            }
+            .stripe:nth-child(1) { top: 2.2em; }
+            .stripe:nth-child(2) { top: 3.4em; }
+            .stripe:nth-child(3) { top: 4.6em; }
+            .stripe:nth-child(4) { top: 5.8em; }
+            .stripe:nth-child(5) { top: 7.0em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts" id="hearts"></div>
+    
+    <div class="container">
+        <h1>Happy Birthday, My Love! 🎉</h1>
+        
+        <div class="photo-frame">
+            <!-- Replace with your girlfriend's photo -->
+            <img src="./image.jpeg" alt="Birthday Girl" id="birthdayPhoto">
+        </div>
+        
+        <p>On this special day, I want you to know how much you mean to me. You light up my life like this candle!</p>
+        
+        <div id="glow" class="glow"></div>
+        <div id="candle-container">
+            <div class="stripe"></div>
+            <div class="stripe"></div>
+            <div class="stripe"></div>
+            <div class="stripe"></div>
+            <div class="stripe"></div>
+            <div id="top">
+                <div class="smoke"></div>
+                <div class="smoke"></div>
+                <div class="smoke"></div>
+                <div id="knot"></div>
+                <div id="flame" class="burn"></div>
+            </div>
+        </div>
+        
+        <p>Make a wish and blow out the candle!</p>
+        <p class="instructions">Blow into your microphone or click the button below</p>
+        <button id="blowButton">Blow Out the Candle</button>
+        
+        <div class="message" id="birthdayMessage">
+            <h2>Your Wish Will Come True! ✨</h2>
+            <p>Thank you for being the amazing person that you are. I'm so grateful to have you in my life.</p>
+            <p>Wishing you a day filled with love, laughter, and all your heart desires!</p>
+            <p>With all my love,</p>
+            <p><strong>[Your Name]</strong></p>
+        </div>
+    </div>
+
+    <script>
+        // Create static hearts
+        function createStaticHearts() {
+            const heartsContainer = document.getElementById('hearts');
+            for (let i = 0; i < 30; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = Math.random() * 100 + 'vh';
+                heart.style.fontSize = (10 + Math.random() * 20) + 'px';
+                heartsContainer.appendChild(heart);
+            }
+        }
+
+        // Animate hearts when candle is blown
+        function animateHearts() {
+            const hearts = document.querySelectorAll('.heart');
+            hearts.forEach(heart => {
+                heart.classList.add('animate');
+                heart.style.animationDuration = 3 + Math.random() * 7 + 's';
+            });
+        }
+
+        // Blow out candle function
+        function blowOutCandle() {
+            const flame = document.getElementById('flame');
+            const message = document.getElementById('birthdayMessage');
+            const glow = document.getElementById('glow');
+            const candle = document.getElementById('candle-container');
+            const blowButton = document.getElementById('blowButton');
+            
+            // If already blown out, return
+            if (flame.classList.contains('puff')) return;
+            
+            flame.classList.remove('burn');
+            flame.classList.add('puff');
+            
+            document.querySelectorAll('.smoke').forEach(smoke => {
+                smoke.classList.add('puff-bubble');
+            });
+            
+            if (glow) glow.remove();
+            
+            setTimeout(() => {
+                message.style.display = 'block';
+                blowButton.style.display = 'none';
+                
+                // Animate the hearts
+                animateHearts();
+                
+                // Change the title text
+                const title = document.querySelector('h1');
+                title.style.opacity = '0';
+                setTimeout(() => {
+                    title.textContent = "It will come true..";
+                    title.style.opacity = '1';
+                }, 500);
+                
+                // Fade candle slightly
+                candle.style.opacity = '0.5';
+            }, 300);
+        }
+
+        // Microphone blow detection
+        function setupMicrophone() {
+            // Check if browser supports audio context
+            if (!('AudioContext' in window || 'webkitAudioContext' in window)) {
+                return;
+            }
+
+            let audioContext;
+            let analyser;
+            let microphone;
+            let isBlowing = false;
+            let blowStartTime = 0;
+
+            function handleSuccess(stream) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                
+                microphone = audioContext.createMediaStreamSource(stream);
+                microphone.connect(analyser);
+                
+                checkBlowing();
+            }
+
+            function checkBlowing() {
+                const dataArray = new Uint8Array(analyser.frequencyBinCount);
+                analyser.getByteFrequencyData(dataArray);
+                
+                // Calculate average volume
+                let sum = 0;
+                for (let i = 0; i < dataArray.length; i++) {
+                    sum += dataArray[i];
+                }
+                const average = sum / dataArray.length;
+                
+                // Threshold for blowing detection
+                if (average > 30) {
+                    if (!isBlowing) {
+                        isBlowing = true;
+                        blowStartTime = Date.now();
+                    }
+                    
+                    // Check if they've been blowing for at least 0.5 seconds
+                    if (Date.now() - blowStartTime > 500) {
+                        blowOutCandle();
+                        return;
+                    }
+                } else {
+                    isBlowing = false;
+                }
+                
+                if (document.getElementById('flame').classList.contains('burn')) {
+                    requestAnimationFrame(checkBlowing);
+                }
+            }
+
+            // Start microphone with user gesture
+            function startMicrophone() {
+                navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+                    .then(handleSuccess)
+                    .catch(() => {
+                        // If microphone access fails, just continue with button
+                    });
+            }
+
+            // Start on any user interaction
+            document.addEventListener('click', function init() {
+                startMicrophone();
+            }, { once: true });
+        }
+
+        // Initialize everything when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            createStaticHearts();
+            setupMicrophone();
+            
+            // Setup blow button
+            document.getElementById('blowButton').addEventListener('click', blowOutCandle);
+            
+            // Also allow clicking the flame
+            document.getElementById('flame').addEventListener('click', blowOutCandle);
+            
+            // Replace with your girlfriend's photo URL
+            // document.getElementById('birthdayPhoto').src = 'your-girlfriend-photo.jpg';
+            
+            // Replace [Your Name] with your actual name
+            document.querySelector('#birthdayMessage strong').textContent = 'Somesh';
+        });
+    </script>
+</body>
+</html>
